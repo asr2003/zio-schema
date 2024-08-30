@@ -6,6 +6,7 @@ import BuildInfoKeys.*
 import scalafix.sbt.ScalafixPlugin.autoImport.*
 import scalanativecrossproject.NativePlatform
 
+import scala.scalanative.build.GC
 import scala.scalanative.sbtplugin.ScalaNativePlugin.autoImport.nativeConfig
 
 object BuildHelper {
@@ -27,7 +28,7 @@ object BuildHelper {
   val Scala213: String = versions("2.13")
   val Scala3: String   = versions("3.3")
 
-  val zioVersion                   = "2.1.7"
+  val zioVersion                   = "2.1.9"
   val zioJsonVersion               = "0.7.2"
   val zioPreludeVersion            = "1.0.0-RC28"
   val zioOpticsVersion             = "0.2.2"
@@ -149,6 +150,13 @@ object BuildHelper {
     }
   )
 
+  def nativeSettings = Seq(
+    nativeConfig ~= { cfg =>
+      cfg.withGC(GC.boehm)
+    },
+    libraryDependencySchemes += "org.scala-native" %% "test-interface" % VersionScheme.Always
+  )
+
   def platformSpecificSources(platform: String, conf: String, baseDirectory: File)(versions: String*): Seq[File] =
     for {
       platform <- List("shared", platform)
@@ -187,8 +195,7 @@ object BuildHelper {
         "test",
         baseDirectory.value
       )
-    },
-    nativeConfig ~= { _.withMultithreading(false) }
+    }
   )
 
   def buildInfoSettings(packageName: String) = Seq(
