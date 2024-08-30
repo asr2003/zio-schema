@@ -47,9 +47,9 @@ jobs:
     - uses: coursier/setup-action@v1
       with:
         jvm: ${{ matrix.java }}
-    - name: Install Boehm GC
+    - name: Install libuv and Boehm GC
       if: matrix.platform == 'Native'
-      run: sudo apt-get update && sudo apt-get install -y libgc-dev
+      run: sudo apt-get update && sudo apt-get install -y libuv1-dev libgc-dev
     - name: Run tests
       run: sbt -debug ++${{ matrix.scala }}! test${{ matrix.platform }}
 
