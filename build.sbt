@@ -36,8 +36,6 @@ inThisBuild(
   )
 )
 
-ThisBuild / dependencyOverrides += "org.scala-native" %% "test-interface" % "0.5.5"
-
 ThisBuild / publishTo := sonatypePublishToBundle.value
 scalacOptions ++= Seq("-scalajs")
 
@@ -160,8 +158,7 @@ lazy val zioSchema = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .nativeSettings(Test / fork := false)
   .nativeSettings(
     libraryDependencies ++= Seq(
-      "io.github.cquiroz" %%% "scala-java-time" % scalaJavaTimeVersion,
-      "org.scala-native"  %%% "test-interface"  % "0.5.5" % Test // Only add this for Scala Native
+      "io.github.cquiroz" %%% "scala-java-time" % scalaJavaTimeVersion
     )
   )
   .jsSettings(
