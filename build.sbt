@@ -477,6 +477,7 @@ lazy val docs = project
 lazy val testDeps = Seq(
   libraryDependencies ++= Seq(
     "dev.zio" %%% "zio-test"     % zioVersion % Test,
-    "dev.zio" %%% "zio-test-sbt" % zioVersion % Test
+    "dev.zio" %%% "zio-test-sbt" % zioVersion % Test exclude("org.scala-native", "test-interface"),
+    "org.scala-native" %%% "test-interface" % "0.5.5" % Test  
   )
 )
