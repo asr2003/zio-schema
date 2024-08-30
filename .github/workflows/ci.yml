@@ -51,7 +51,7 @@ jobs:
       if: matrix.platform == 'Native'
       run: sudo apt-get update && sudo apt-get install -y libgc-dev
     - name: Run tests
-      run: sbt ++${{ matrix.scala }}! test${{ matrix.platform }}
+      run: sbt -debug ++${{ matrix.scala }}! test${{ matrix.platform }}
 
   ci:
     runs-on: ubuntu-20.04
