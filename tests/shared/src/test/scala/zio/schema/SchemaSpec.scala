@@ -72,8 +72,7 @@ object SchemaSpec extends ZIOSpecDefault {
       test("validate should handle multiple validations") {
         val schema = Schema[String]
           .validate(Validation.minLength(3))
-          .validate(Validation.pattern("^[a-z]+$"))
-
+          .validate(Validation.regex("^[a-z]+$".r))
         val validValue  = "abc"
         val validResult = Schema.validate(validValue)(schema)
         assert(validResult)(isEmpty) && {
