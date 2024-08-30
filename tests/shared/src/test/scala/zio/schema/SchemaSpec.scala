@@ -48,9 +48,40 @@ object SchemaSpec extends ZIOSpecDefault {
       val tupleSchema = Schema.Tuple2(left, right, Chunk("some Annotation"))
       val record      = tupleSchema.toRecord
       assert(record.annotations)(hasFirst(equalTo("some Annotation")))
-    }
-  )
+    },
+    suite("Schema validation")(
+      test("validate method should attach validation to schema") {
+        val schema              = Schema[String]
+        val minLengthValidation = Validation.minLength(3)
+        val validatedSchema     = schema.validate(minLengthValidation)
+        assert(validatedSchema.annotations)(contains(ValidationAnnotation(minLengthValidation)))
+      },
+      test("validate should return an error if value does not satisfy validation") {
+        val schema      = Schema[String].validate(Validation.minLength(3))
+        val validValue  = "abc"
+        val validResult = Schema.validate(validValue)(schema)
+        assert(validResult)(isEmpty) && // No errors for valid input
+        {
+          val invalidValue  = "ab"
+          val invalidResult = Schema.validate(invalidValue)(schema)
+          assert(invalidResult)(hasSize(equalTo(1)))
+        }
+      },
+      test("validate should handle multiple validations") {
+        val schema = Schema[String]
+          .validate(Validation.minLength(3))
+          .validate(Validation.pattern("^[a-z]+$"))
 
+        val validValue  = "abc"
+        val validResult = Schema.validate(validValue)(schema)
+        assert(validResult)(isEmpty) && {
+          val invalidValue  = "ab1"
+          val invalidResult = Schema.validate(invalidValue)(schema)
+          assert(invalidResult)(hasSize(equalTo(1))) // One error for pattern mismatch
+        }
+      }
+    )
+  )
   def schemaUnit: Schema[Unit] = Schema[Unit]
   def schemaInt: Schema[Int]   = Schema[Int]
 
