@@ -188,8 +188,7 @@ object BuildHelper {
         baseDirectory.value
       )
     },
-    nativeConfig ~= { _.withMultithreading(false) },
-  ThisBuild / dependencyOverrides += "org.scala-native" %% "test-interface" % "0.5.5"
+    nativeConfig ~= { _.withMultithreading(false) }
   )
 
   def buildInfoSettings(packageName: String) = Seq(
