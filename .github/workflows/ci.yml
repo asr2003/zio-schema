@@ -47,8 +47,6 @@ jobs:
     - uses: coursier/setup-action@v1
       with:
         jvm: ${{ matrix.java }}
-    - name: Cache scala dependencies
-      uses: coursier/cache-action@v6
     - name: Install Boehm GC
       if: matrix.platform == 'Native'
       run: sudo apt-get update && sudo apt-get install -y libgc-dev
