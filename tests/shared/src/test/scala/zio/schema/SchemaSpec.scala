@@ -76,11 +76,11 @@ object SchemaSpec extends ZIOSpecDefault {
       test("multiple validations should be correctly attached and enforced") {
         val schema = Schema[String]
           .attachValidation(Validation.minLength(3))
-          .attachValidation(Validation.regex(Regex("^[a-z]+$")))
+          .attachValidation(Validation.regex("^[a-z]+$"))
         assert(schema.annotations.exists {
-          case ValidationAnnotation(Validation.MinLength(3))             => true
-          case ValidationAnnotation(Validation.Regex(Regex("^[a-z]+$"))) => true
-          case _                                                         => false
+          case ValidationAnnotation(Validation.MinLength(3))                                     => true
+          case ValidationAnnotation(Validation.Regex(pattern)) if pattern.toString == "^[a-z]+$" => true
+          case _                                                                                 => false
         })(isTrue) && {
           val validValue  = "abc"
           val validResult = schema.validate(value = validValue)
