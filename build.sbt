@@ -215,7 +215,7 @@ lazy val zioSchemaDerivation = crossProject(JSPlatform, JVMPlatform, NativePlatf
   .nativeSettings(Test / fork := false)
   .nativeSettings(nativeSettings)
   .nativeSettings(
-\    libraryDependencies ++= Seq(
+    libraryDependencies ++= Seq(
       "io.github.cquiroz" %%% "scala-java-time" % scalaJavaTimeVersion
     )
   )
@@ -365,7 +365,7 @@ lazy val zioSchemaOptics = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .nativeSettings(Test / fork := false)
   .nativeSettings(nativeSettings)
   .nativeSettings(
-\    libraryDependencies ++= Seq(
+    libraryDependencies ++= Seq(
       "io.github.cquiroz" %%% "scala-java-time" % scalaJavaTimeVersion
     )
   )
