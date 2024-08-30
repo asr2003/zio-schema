@@ -160,7 +160,8 @@ lazy val zioSchema = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .nativeSettings(Test / fork := false)
   .nativeSettings(
     libraryDependencies ++= Seq(
-      "io.github.cquiroz" %%% "scala-java-time" % scalaJavaTimeVersion
+      "io.github.cquiroz" %%% "scala-java-time" % scalaJavaTimeVersion,
+      "org.scala-native"  %%% "test-interface"  % "0.5.5" % Test // Only add this for Scala Native
     )
   )
   .jsSettings(
@@ -477,7 +478,6 @@ lazy val docs = project
 lazy val testDeps = Seq(
   libraryDependencies ++= Seq(
     "dev.zio" %%% "zio-test"     % zioVersion % Test,
-    "dev.zio" %%% "zio-test-sbt" % zioVersion % Test exclude("org.scala-native", "test-interface"),
-    "org.scala-native" %%% "test-interface" % "0.5.5" % Test  
+    "dev.zio" %%% "zio-test-sbt" % zioVersion % Test
   )
 )
