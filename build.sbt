@@ -1,5 +1,5 @@
 import sbtcrossproject.CrossPlugin.autoImport._
-import BuildHelper.{ crossProjectSettings, _ }
+import BuildHelper.*
 import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
