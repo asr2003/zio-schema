@@ -152,6 +152,17 @@ sealed trait Schema[A] {
   def validate(value: A)(implicit schema: Schema[A]): Chunk[ValidationError] = Schema.validate[A](value)
 
   /**
+   * Adds a validation to this schema.
+   *
+   * @param validation the validation to add
+   * @return a new schema with the validation added
+   */
+  def attachValidation(validation: Validation[A]): Schema[A] = {
+    val validationAnnotation = ValidationAnnotation(validation)
+    self.annotate(validationAnnotation)
+  }
+
+  /**
    * Returns a new schema that combines this schema and the specified schema together, modeling
    * their tuple composition.
    */
@@ -258,8 +269,8 @@ object Schema extends SchemaPlatformSpecific with SchemaEquality {
             case zio.schema.Fallback.Both(valueLeft, valueRight) => loop(valueLeft, left) ++ loop(valueRight, right)
           }
         case Dynamic(_) => Chunk.empty
-        case Fail(_, _) => Chunk.empty
-      }
+        case Fail(_, _) => Chunk.empty   
+      }	     
     loop(value, schema)
   }
 
