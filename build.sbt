@@ -297,7 +297,6 @@ lazy val zioSchemaThrift = project
   .settings(stdSettings("zio-schema-thrift"))
   .settings(dottySettings)
   .settings(buildInfoSettings("zio.schema.thrift"))
-  .nativeSettings(nativeSettings)
   .settings(
     libraryDependencies ++= Seq(
       "org.apache.thrift"  % "libthrift"              % thriftVersion,
@@ -312,7 +311,6 @@ lazy val zioSchemaMsgPack = project
   .settings(stdSettings("zio-schema-msg-pack"))
   .settings(dottySettings)
   .settings(buildInfoSettings("zio.schema.msgpack"))
-  .nativeSettings(nativeSettings)
   .settings(
     libraryDependencies ++= Seq(
       "org.msgpack"                  % "msgpack-core"               % msgpackVersion,
@@ -328,7 +326,6 @@ lazy val zioSchemaAvro = project
   .settings(stdSettings("zio-schema-avro"))
   .settings(dottySettings)
   .settings(buildInfoSettings("zio.schema.avro"))
-  .nativeSettings(nativeSettings)
   .settings(
     libraryDependencies ++= Seq(
       "dev.zio"         %% "zio-json" % zioJsonVersion,
@@ -342,7 +339,6 @@ lazy val zioSchemaBson = project
   .dependsOn(zioSchema.jvm, zioSchemaDerivation.jvm, zioSchemaZioTest.jvm % Test, tests.jvm % "test->test")
   .settings(stdSettings("zio-schema-bson"))
   .settings(buildInfoSettings("zio.schema.bson"))
-  .nativeSettings(nativeSettings)
   .settings(
     libraryDependencies ++= Seq(
       "org.mongodb"            % "bson"                     % bsonVersion,
