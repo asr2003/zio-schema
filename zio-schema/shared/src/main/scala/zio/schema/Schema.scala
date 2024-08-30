@@ -269,14 +269,7 @@ object Schema extends SchemaPlatformSpecific with SchemaEquality {
             case zio.schema.Fallback.Both(valueLeft, valueRight) => loop(valueLeft, left) ++ loop(valueRight, right)
           }
         case Dynamic(_) => Chunk.empty
-        case Fail(_, _) => Chunk.empty
-        case other =>
-          val annotationErrors = schema.annotations.collect {
-            case ValidationAnnotation(validation: Validation[A]) => validation.validate(value)
-          }.flatMap(_.swap.getOrElse(Chunk.empty))
-
-          annotationErrors
-      }
+        case Fail(_, _) => Chunk.empty        
     loop(value, schema)
   }
 
