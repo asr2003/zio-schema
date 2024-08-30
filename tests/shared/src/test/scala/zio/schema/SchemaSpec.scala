@@ -55,13 +55,13 @@ object SchemaSpec extends ZIOSpecDefault {
       test("validate method should attach validation to schema") {
         val schema              = Schema[String]
         val minLengthValidation = Validation.minLength(3)
-        val validatedSchema     = schema.validate(validation = minLengthValidation)
+        val validatedSchema     = schema.attachValidation(minLengthValidation)
         assert(validatedSchema.annotations)(contains(ValidationAnnotation(minLengthValidation)))
       },
       test("attached validation should be applied when validating a value") {
-        val schema              = Schema[String].validate(Validation.minLength(3))
+        val schema              = Schema[String]
         val minLengthValidation = Validation.minLength(3)
-        val validatedSchema     = schema.validate(validation = minLengthValidation)
+        val validatedSchema     = schema.attachValidation(minLengthValidation)
 
         val validValue  = "abc"
         val validResult = validatedSchema.validate(value = validValue)

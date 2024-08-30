@@ -157,7 +157,7 @@ sealed trait Schema[A] {
    * @param validation the validation to add
    * @return a new schema with the validation added
    */
-  def validate(validation: Validation[A]): Schema[A] = {
+  def attachValidation(validation: Validation[A]): Schema[A] = {
     val validationAnnotation = ValidationAnnotation(validation)
     self.annotate(validationAnnotation)
   }
