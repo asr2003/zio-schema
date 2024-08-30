@@ -387,7 +387,7 @@ object ValidationSpec extends ZIOSpecDefault {
             )
         )
       )
-      val validation = genericRecord.validate(ListMap())(genericRecord)
+      val validation = genericRecord.validate(value = ListMap[String, Any])(genericRecord)
       assertTrue(validation.map(_.message) == Chunk("Missing field name"))
     }
   )

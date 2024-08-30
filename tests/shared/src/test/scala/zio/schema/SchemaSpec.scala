@@ -58,27 +58,38 @@ object SchemaSpec extends ZIOSpecDefault {
         val validatedSchema     = schema.validate(validation = minLengthValidation)
         assert(validatedSchema.annotations)(contains(ValidationAnnotation(minLengthValidation)))
       },
-      test("validate should return an error if value does not satisfy validation") {
-        val schema      = Schema[String].validate(Validation.minLength(3))
+      test("attached validation should be applied when validating a value") {
+        val schema              = Schema[String].validate(Validation.minLength(3))
+        val minLengthValidation = Validation.minLength(3)
+        val validatedSchema     = schema.validate(validation = minLengthValidation)
+
         val validValue  = "abc"
-        val validResult = Schema.validate(value = validValue)(schema)
+        val validResult = validatedSchema.validate(value = validValue)
+
         assert(validResult)(isEmpty) && // No errors for valid input
         {
           val invalidValue  = "ab"
-          val invalidResult = Schema.validate(value = invalidValue)(schema)
+          val invalidResult = validatedSchema.validate(value = invalidValue)
           assert(invalidResult)(hasSize(equalTo(1)))
         }
       },
-      test("validate should handle multiple validations") {
+      test("multiple validations should be correctly attached and enforced") {
         val schema = Schema[String]
           .validate(Validation.minLength(3))
-          .validate(Validation.regex("^[a-z]+$")) // Just pass the string pattern directly if Regex is an object
-        val validValue  = "abc"
-        val validResult = Schema.validate(value = validValue)(schema)
-        assert(validResult)(isEmpty) && {
-          val invalidValue  = "ab1"
-          val invalidResult = Schema.validate(value = invalidValue)(schema)
-          assert(invalidResult)(hasSize(equalTo(1))) // One error for pattern mismatch
+          .validate(Validation.regex("^[a-z]+$"))
+        assert(schema.annotations.exists {
+          case ValidationAnnotation(Validation.MinLength(3))      => true
+          case ValidationAnnotation(Validation.regex("^[a-z]+$")) => true
+          case _                                                  => false
+        })(isTrue) && {
+          val validValue  = "abc"
+          val validResult = schema.validate(value = validValue)
+
+          assert(validResult)(isEmpty) && {
+            val invalidValue  = "ab1"
+            val invalidResult = schema.validate(value = invalidValue)
+            assert(invalidResult)(hasSize(equalTo(1))) // One error for pattern mismatch
+          }
         }
       }
     )
