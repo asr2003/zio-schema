@@ -52,7 +52,7 @@ object SchemaSpec extends ZIOSpecDefault {
       assert(record.annotations)(hasFirst(equalTo("some Annotation")))
     },
     suite("Schema validation")(
-      test("validate method should attach validation to schema") {
+      test("attachValidation method should attach validation to schema") {
         val schema              = Schema[String]
         val minLengthValidation = Validation.minLength(3)
         val validatedSchema     = schema.attachValidation(minLengthValidation)
@@ -75,12 +75,12 @@ object SchemaSpec extends ZIOSpecDefault {
       },
       test("multiple validations should be correctly attached and enforced") {
         val schema = Schema[String]
-          .validate(Validation.minLength(3))
-          .validate(Validation.regex("^[a-z]+$"))
+          .attachValidation(Validation.minLength(3))
+          .attachValidation(Validation.regex(Regex("^[a-z]+$")))
         assert(schema.annotations.exists {
-          case ValidationAnnotation(Validation.MinLength(3))      => true
-          case ValidationAnnotation(Validation.regex("^[a-z]+$")) => true
-          case _                                                  => false
+          case ValidationAnnotation(Validation.MinLength(3))             => true
+          case ValidationAnnotation(Validation.Regex(Regex("^[a-z]+$"))) => true
+          case _                                                         => false
         })(isTrue) && {
           val validValue  = "abc"
           val validResult = schema.validate(value = validValue)
