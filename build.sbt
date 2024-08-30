@@ -36,6 +36,8 @@ inThisBuild(
   )
 )
 
+ThisBuild / dependencyOverrides += "org.scala-native" %% "test-interface" % "0.5.5"
+
 ThisBuild / publishTo := sonatypePublishToBundle.value
 scalacOptions ++= Seq("-scalajs")
 
