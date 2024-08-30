@@ -27,7 +27,7 @@ object BuildHelper {
   val Scala213: String = versions("2.13")
   val Scala3: String   = versions("3.3")
 
-  val zioVersion                   = "2.1.7"
+  val zioVersion                   = "2.1.9"
   val zioJsonVersion               = "0.7.2"
   val zioPreludeVersion            = "1.0.0-RC28"
   val zioOpticsVersion             = "0.2.2"
@@ -188,7 +188,6 @@ object BuildHelper {
         baseDirectory.value
       )
     },
-    nativeConfig ~= { _.withMultithreading(false) }
   )
 
   def buildInfoSettings(packageName: String) = Seq(
