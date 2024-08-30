@@ -6,6 +6,8 @@ import scala.collection.immutable.ListMap
 import zio.Chunk
 import zio.schema.CaseSet._
 import zio.schema.SchemaAssertions.hasSameSchema
+import zio.schema.validation._
+import zio.schema.annotation.ValidationAnnotation
 import zio.test.Assertion._
 import zio.test._
 
