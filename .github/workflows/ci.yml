@@ -7,7 +7,7 @@ env:
 on:
   pull_request:
   push:
-    branches: ["main"]
+    branches: ['main']
   release:
     types:
       - published
@@ -37,31 +37,34 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: ["temurin:17", "temurin:21"]
-        scala: ["2.12.18", "2.13.12", "3.3.1"]
-        platform: ["JVM", "Native", "JS"]
+        java: ['temurin:17', 'temurin:21']
+        scala: ['2.12.18', '2.13.12', '3.3.1']
+        platform: ['JVM', 'Native', 'JS']
     steps:
-      - uses: actions/checkout@v3.0.0
-        with:
-          fetch-depth: 0
-      - uses: coursier/setup-action@v1
-        with:
-          jvm: ${{ matrix.java }}
-      - name: Cache scala dependencies
-        uses: coursier/cache-action@v6
-      - name: Run tests
-        run: sbt ++${{ matrix.scala }}! test${{ matrix.platform }}
+    - uses: actions/checkout@v3.0.0
+      with:
+        fetch-depth: 0
+    - uses: coursier/setup-action@v1
+      with:
+        jvm: ${{ matrix.java }}
+    - name: Cache scala dependencies
+      uses: coursier/cache-action@v6
+    - name: Install Boehm GC
+      if: matrix.platform == 'Native'
+      run: sudo apt-get update && sudo apt-get install -y libgc-dev
+    - name: Run tests
+      run: sbt ++${{ matrix.scala }}! test${{ matrix.platform }}
 
   ci:
     runs-on: ubuntu-20.04
-    needs: [build, lint]
+    needs: [build,lint]
     steps:
       - run: echo "All checks passed"
 
   publish:
     runs-on: ubuntu-20.04
     timeout-minutes: 45
-    needs: [build, lint]
+    needs: [build,lint]
     if: github.event_name != 'pull_request'
     steps:
       - uses: actions/checkout@v3.0.0
@@ -74,3 +77,4 @@ jobs:
           PGP_SECRET: ${{ secrets.PGP_SECRET }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+
