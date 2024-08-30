@@ -269,7 +269,8 @@ object Schema extends SchemaPlatformSpecific with SchemaEquality {
             case zio.schema.Fallback.Both(valueLeft, valueRight) => loop(valueLeft, left) ++ loop(valueRight, right)
           }
         case Dynamic(_) => Chunk.empty
-        case Fail(_, _) => Chunk.empty        
+        case Fail(_, _) => Chunk.empty   
+      }	     
     loop(value, schema)
   }
 
