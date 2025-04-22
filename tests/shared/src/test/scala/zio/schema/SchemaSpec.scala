@@ -6,6 +6,8 @@ import scala.collection.immutable.ListMap
 import zio.Chunk
 import zio.schema.CaseSet._
 import zio.schema.SchemaAssertions.hasSameSchema
+import zio.schema.validation._
+import zio.schema.annotation.ValidationAnnotation
 import zio.test.Assertion._
 import zio.test._
 
@@ -48,9 +50,50 @@ object SchemaSpec extends ZIOSpecDefault {
       val tupleSchema = Schema.Tuple2(left, right, Chunk("some Annotation"))
       val record      = tupleSchema.toRecord
       assert(record.annotations)(hasFirst(equalTo("some Annotation")))
-    }
-  )
+    },
+    suite("Schema validation")(
+      test("attachValidation method should attach validation to schema") {
+        val schema              = Schema[String]
+        val minLengthValidation = Validation.minLength(3)
+        val validatedSchema     = schema.attachValidation(minLengthValidation)
+        assert(validatedSchema.annotations)(contains(ValidationAnnotation(minLengthValidation)))
+      },
+      test("attached validation should be applied when validating a value") {
+        val schema              = Schema[String]
+        val minLengthValidation = Validation.minLength(3)
+        val validatedSchema     = schema.attachValidation(minLengthValidation)
 
+        val validValue  = "abc"
+        val validResult = validatedSchema.validate(value = validValue)
+
+        assert(validResult)(isEmpty) && // No errors for valid input
+        {
+          val invalidValue  = "ab"
+          val invalidResult = validatedSchema.validate(value = invalidValue)
+          assert(invalidResult)(hasSize(equalTo(1)))
+        }
+      },
+      test("multiple validations should be correctly attached and enforced") {
+        val schema = Schema[String]
+          .attachValidation(Validation.minLength(3))
+          .attachValidation(Validation.regex("^[a-z]+$"))
+        assert(schema.annotations.exists {
+          case ValidationAnnotation(Validation.MinLength(3))                                     => true
+          case ValidationAnnotation(Validation.Regex(pattern)) if pattern.toString == "^[a-z]+$" => true
+          case _                                                                                 => false
+        })(isTrue) && {
+          val validValue  = "abc"
+          val validResult = schema.validate(value = validValue)
+
+          assert(validResult)(isEmpty) && {
+            val invalidValue  = "ab1"
+            val invalidResult = schema.validate(value = invalidValue)
+            assert(invalidResult)(hasSize(equalTo(1))) // One error for pattern mismatch
+          }
+        }
+      }
+    )
+  )
   def schemaUnit: Schema[Unit] = Schema[Unit]
   def schemaInt: Schema[Int]   = Schema[Int]
 
